@@ -22,13 +22,8 @@ def read_sensors_fernet():
 @app.route('/aes', methods=['POST'])
 def read_sensors_aes():
     data = request.get_data()
-    print(data)
 
     nonce, tag, ciphertext = data.split(b':')
-
-    print(nonce)
-    print(tag)
-    print(ciphertext)
 
     key = b'\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw'
     cipher = AES.new(key, AES.MODE_EAX, nonce)
