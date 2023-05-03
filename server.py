@@ -39,12 +39,18 @@ def read_sensors_aes():
 @app.route('/chacha', methods=['POST'])
 def read_sensors_chacha():
     key = b'\xc0\xbd\xfbS\x92\x9e\xa4\x0e\xf4\xc6\xd0|\x12j\x96\xe9\x11A\xf6\x1c\x9f\x88.\xb0\x1d\xe7\x88-\x13\x88\xb9\xd8'
-    data = request.get_data()
-    nonce, ciphertext = data.split(b':')
-    cipher = ChaCha20.new(key=key, nonce=b64decode(nonce))
-    data = cipher.decrypt(ciphertext)
+    
+    try:
+        b64 = json.loads(request.get_data())
+        nonce = b64decode(b64['nonce'])
+        ciphertext = b64decode(b64['ciphertext'])
+        cipher = ChaCha20.new(key=key, nonce=nonce)
+        plaintext = cipher.decrypt(ciphertext)
+        print("The message was " + f'{plaintext}')
+    except (ValueError, KeyError):
+        print("Incorrect decryption")
 
-    return {"message": f'{data.decode()}'}, 200
+    return {"message": f'{plaintext}'}, 200
     
 
 app.run(host="0.0.0.0", port="5000")
