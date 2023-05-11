@@ -2,3 +2,5 @@ requests
 flask
 cryptography
 pycryptodome
+pylint
+flake8

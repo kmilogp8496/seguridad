@@ -1,17 +1,18 @@
+import json
+import random
+from base64 import b64decode
+import requests
+from Crypto.Cipher import ChaCha20
+from Crypto.Cipher import AES
 from flask import Flask, request
 from cryptography.fernet import Fernet
-from Crypto.Cipher import AES
-import json
-from base64 import b64decode
-from Crypto.Cipher import ChaCha20
-import random
-import requests
 
 app = Flask(__name__)
 
 keys = {}
 
 DEVICE_ID = "server"
+
 
 def aes_decrypt(data):
     nonce, tag, ciphertext = data.split(b":")
@@ -23,12 +24,19 @@ def aes_decrypt(data):
 
 @app.route("/fernen", methods=["POST"])
 def read_sensors_fernet():
+    """Summary
+    Decrypts the data sent by the client using Fernet encryption
+
+    Returns:
+        dict: Decrypted data
+    """
     key = b"SToGvxvMfVR7bGbO2-FfCziacjiiyjCeZMMfqyKmFBg="
     f = Fernet(key)
     data = request.get_data()
     decrypted_token = f.decrypt(data)
 
     return {"message": f"{decrypted_token}"}, 200
+
 
 @app.route("/aes", methods=["POST"])
 def read_sensors_aes():
@@ -46,9 +54,9 @@ def read_sensors_chacha():
     try:
         b64 = json.loads(request.get_data())
         nonce = b64decode(b64["nonce"])
-        ciphertext = b64decode(b64["ciphertext"])
+        cipher_text = b64decode(b64["ciphertext"])
         cipher = ChaCha20.new(key=key, nonce=nonce)
-        plaintext = cipher.decrypt(ciphertext)
+        plaintext = cipher.decrypt(cipher_text)
         print("The message was " + f"{plaintext}")
     except (ValueError, KeyError):
         print("Incorrect decryption")
@@ -59,27 +67,27 @@ def read_sensors_chacha():
 @app.route("/generate_key", methods=["POST"])
 def generate_key():
     data = request.get_data()
-    jsonData = json.loads(data)
-    idDevice = jsonData["id"]
-    randomNumberDevice = jsonData["random"]
-    randomNumber = random.randint(0, 1000)
-    newData = {
-        "idA": idDevice,
-        "randomA": randomNumberDevice,
+    json_data = json.loads(data)
+    id_device = json_data["id"]
+    random_number_device = json_data["random"]
+    random_number = random.randint(0, 1000)
+    new_data = {
+        "idA": id_device,
+        "randomA": random_number_device,
         "idB": DEVICE_ID,
-        "randomB": randomNumber,
+        "randomB": random_number,
     }
     response = requests.post(
-        "http://localhost:5001/generate/", data=json.dumps(newData), timeout=10000
+        "http://localhost:5001/generate/", data=json.dumps(new_data), timeout=10000
     )
-    encryptedKeys = json.loads(response.text)
-    print(b64decode(encryptedKeys["kbs"]))
-    kbs = aes_decrypt(b64decode(encryptedKeys["kbs"]))
+    encrypted_keys = json.loads(response.text)
+    print(b64decode(encrypted_keys["kbs"]))
+    kbs = aes_decrypt(b64decode(encrypted_keys["kbs"]))
 
-    if kbs["idA"] == idDevice and kbs["randomB"] == randomNumber:
-        keys.update(dict(idDevice, kbs["key"]))
+    if kbs["idA"] == id_device and kbs["randomB"] == random_number:
+        keys.update(dict(id_device, kbs["key"]))
         print(keys)
-        return encryptedKeys["kas"]
+        return encrypted_keys["kas"]
 
     return "Error generating keys"
 

@@ -11,33 +11,57 @@ keys = {
     "client": b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw",
 }
 
-def encrypt(data, clientId):
-    key = keys[clientId]
+
+def encrypt(data, client_id):
+    """Summary
+
+    Args:
+        data (bytes): Data to be encrypted
+        client_id (str): Client ID
+    Returns:
+        bytes: Encrypted data
+    """
+    key = keys[client_id]
     cipher = AES.new(key, AES.MODE_EAX)
-    ciphertext, tag = cipher.encrypt_and_digest(data)
-    return b":".join([cipher.nonce, tag, ciphertext])
+    cipher_text, tag = cipher.encrypt_and_digest(data)
+    return b":".join([cipher.nonce, tag, cipher_text])
+
 
 @app.route("/generate/", methods=["POST"])
-def read_sensors_aes():
+def generate_keys():
+    """Summary
+    Generate keys for client A and B
+
+    Returns:
+        Keys for client A and B in base64 encoded format
+    """
     data = request.get_data()
-    jsonData = json.loads(data)
+    json_data = json.loads(data)
 
-    generatedKey = get_random_bytes(16)
+    generated_key = get_random_bytes(16)
 
-    kaData = {
-        "key": str(b64encode(generatedKey).decode("utf-8")),
-        "idB": jsonData["idB"],
-        "randomA": jsonData["randomA"],
+    ka_data = {
+        "key": str(b64encode(generated_key).decode("utf-8")),
+        "idB": json_data["idB"],
+        "randomA": json_data["randomA"],
     }
-    kbData = {
-        "key": str(b64encode(generatedKey).decode("utf-8")),
-        "idA": jsonData["idA"],
-        "randomB": jsonData["randomB"],
+    kb_data = {
+        "key": str(b64encode(generated_key).decode("utf-8")),
+        "idA": json_data["idA"],
+        "randomB": json_data["randomB"],
     }
 
     return {
-        "kas": str(b64encode(encrypt(json.dumps(kaData).encode("utf-8"), jsonData["idA"])).decode("utf-8")),
-        "kbs": str(b64encode(encrypt(json.dumps(kbData).encode("utf-8"), jsonData["idB"])).decode("utf-8")),
+        "kas": str(
+            b64encode(
+                encrypt(json.dumps(ka_data).encode("utf-8"), json_data["idA"])
+            ).decode("utf-8")
+        ),
+        "kbs": str(
+            b64encode(
+                encrypt(json.dumps(kb_data).encode("utf-8"), json_data["idB"])
+            ).decode("utf-8")
+        ),
     }
 
 
