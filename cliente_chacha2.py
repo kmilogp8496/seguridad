@@ -18,5 +18,3 @@ ct = b64encode(ciphertext).decode('utf-8')
 result = json.dumps({'nonce':nonce, 'ciphertext':ct})
 
 r = requests.post(QUERY_URI, data=result, timeout=10000)
-
-print(r.text)

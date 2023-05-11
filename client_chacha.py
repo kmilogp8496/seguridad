@@ -21,6 +21,7 @@ ct = b64encode(ciphertext).decode('utf-8')
 data = b':'.join([nonce, ct])
 print(data)
 
-r = requests.post(QUERY_URI, data=data, timeout=10000)
+# r = requests.post(QUERY_URI, data=data, timeout=10000)
+r = requests.post('http://localhost:5000/', data='{"temperature": 20}', timeout=10000)
 
 print(r.text)
