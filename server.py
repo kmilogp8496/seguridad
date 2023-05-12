@@ -80,12 +80,12 @@ def generate_key():
     response = requests.post(
         "http://localhost:5001/generate/", data=json.dumps(new_data), timeout=10000
     )
-    encrypted_keys = json.loads(response.text)
-    print(b64decode(encrypted_keys["kbs"]))
-    kbs = aes_decrypt(b64decode(encrypted_keys["kbs"]))
+    encrypted_keys = response.json()
+
+    kbs = json.loads(aes_decrypt(b64decode(encrypted_keys["kbs"])).decode("utf-8"))
 
     if kbs["idA"] == id_device and kbs["randomB"] == random_number:
-        keys.update(dict(id_device, kbs["key"]))
+        keys.update({f"{id_device}": kbs["key"]})
         print(keys)
         return encrypted_keys["kas"]
 
