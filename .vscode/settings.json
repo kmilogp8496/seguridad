@@ -4,7 +4,9 @@
     },
     "python.formatting.provider": "none",
     "cSpell.words": [
+        "chacha",
         "ciphertext",
+        "dotenv",
         "fernet"
     ]
 }

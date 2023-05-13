@@ -13,5 +13,3 @@ data = b'{"temperature": 20}'
 temperature = f.encrypt(data)
 
 r = requests.post(QUERY_URI, data=temperature, timeout=10000)
-
-print(r.text)

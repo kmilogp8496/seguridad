@@ -3,6 +3,8 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import json
 from base64 import b64encode
+from Seguridad.app import IP_ADDRESS, KEY_GENERATOR_PORT
+from Seguridad.seguridad import AESDemo
 
 app = Flask(__name__)
 
@@ -10,21 +12,6 @@ keys = {
     "server": b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xeew",
     "client": b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw",
 }
-
-
-def encrypt(data, client_id):
-    """Summary
-
-    Args:
-        data (bytes): Data to be encrypted
-        client_id (str): Client ID
-    Returns:
-        bytes: Encrypted data
-    """
-    key = keys[client_id]
-    cipher = AES.new(key, AES.MODE_EAX)
-    cipher_text, tag = cipher.encrypt_and_digest(data)
-    return b":".join([cipher.nonce, tag, cipher_text])
 
 
 @app.route("/generate/", methods=["POST"])
@@ -51,18 +38,21 @@ def generate_keys():
         "randomB": json_data["randomB"],
     }
 
+    encrypter_a = AESDemo(keys[json_data["idA"]])
+    encrypter_b = AESDemo(keys[json_data["idB"]])
+
     return {
         "kas": str(
-            b64encode(
-                encrypt(json.dumps(ka_data).encode("utf-8"), json_data["idA"])
-            ).decode("utf-8")
+            b64encode(encrypter_a.encrypt(json.dumps(ka_data).encode("utf-8"))).decode(
+                "utf-8"
+            )
         ),
         "kbs": str(
-            b64encode(
-                encrypt(json.dumps(kb_data).encode("utf-8"), json_data["idB"])
-            ).decode("utf-8")
+            b64encode(encrypter_b.encrypt(json.dumps(kb_data).encode("utf-8"))).decode(
+                "utf-8"
+            )
         ),
     }
 
 
-app.run(host="0.0.0.0", port="5001")
+app.run(host=IP_ADDRESS, port=KEY_GENERATOR_PORT)

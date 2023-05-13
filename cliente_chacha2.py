@@ -1,7 +1,6 @@
 import json
-from base64 import b64encode, b64decode
+from base64 import b64encode
 from Crypto.Cipher import ChaCha20
-from Crypto.Random import get_random_bytes
 import requests
 
 BASE_ADDRESS = '127.0.0.1:5000'

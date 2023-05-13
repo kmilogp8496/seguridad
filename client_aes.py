@@ -1,23 +1,29 @@
-from Crypto.Cipher import AES
-import requests
+"""Demo for AES encryption"""
+import random
 import json
+from base64 import b64decode
+from Seguridad.clients import ServerClient
+from Seguridad.seguridad import AESDemo
 
-data = b'{"temperature": 20}'
+DEVICE_ID = "client"
+SERVER_ID = "server"
+GENERATOR_SHARED_KEY=b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
 
-print(data)
-print(json.dumps({"temperature": 20}).encode('utf-8'))
+random_number = random.randint(0, 1000)
 
-key = b'\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw'
+get_key_data = json.dumps({"id": DEVICE_ID, "random": random_number})
 
-cipher = AES.new(key, AES.MODE_EAX)
-ciphertext, tag = cipher.encrypt_and_digest(data)
+client = ServerClient(DEVICE_ID)
 
+response = client.generate_key(get_key_data)
 
-data = b':'.join([cipher.nonce, tag, ciphertext])
+decoded_text = b64decode(response.text)
 
+decrypter = AESDemo(GENERATOR_SHARED_KEY)
 
-BASE_ADDRESS = '127.0.0.1:5000'
+kas = json.loads(decrypter.decrypt(decoded_text))
 
-QUERY_URI = f'http://{BASE_ADDRESS}/aes'
+if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
+    kab: str = kas["key"]
 
-r = requests.post(QUERY_URI, data=data, timeout=10000)
+print(kab)

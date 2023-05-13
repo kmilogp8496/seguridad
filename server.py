@@ -6,6 +6,8 @@ from Crypto.Cipher import ChaCha20
 from Crypto.Cipher import AES
 from flask import Flask, request
 from cryptography.fernet import Fernet
+from Seguridad.app import IP_ADDRESS, SERVER_PORT
+from Seguridad.seguridad import AESDemo
 
 app = Flask(__name__)
 
@@ -13,9 +15,11 @@ keys = {}
 
 DEVICE_ID = "server"
 
+GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xeew"
+
 
 def aes_decrypt(data):
-    nonce, tag, ciphertext = data.split(b":")
+    nonce, tag, ciphertext = data.split(b"::")
 
     key = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xeew"
     cipher = AES.new(key, AES.MODE_EAX, nonce)
@@ -38,17 +42,17 @@ def read_sensors_fernet():
     return {"message": f"{decrypted_token}"}, 200
 
 
-@app.route("/aes", methods=["POST"])
-def read_sensors_aes():
+@app.route("/aes/<device_id>", methods=["POST"])
+def read_sensors_aes(device_id: str):
     data = request.get_data()
-
-    decrypted_data = aes_decrypt(data)
+    decrypter = AESDemo(keys[device_id])
+    decrypted_data = decrypter.decrypt(data)
 
     return {"message": f"{decrypted_data}"}, 200
 
 
-@app.route("/chacha", methods=["POST"])
-def read_sensors_chacha():
+@app.route("/chacha/<device_id>", methods=["POST"])
+def read_sensors_chacha(device_id: str):
     key = b"\xc0\xbd\xfbS\x92\x9e\xa4\x0e\xf4\xc6\xd0|\x12j\x96\xe9\x11A\xf6\x1c\x9f\x88.\xb0\x1d\xe7\x88-\x13\x88\xb9\xd8"
 
     try:
@@ -92,4 +96,4 @@ def generate_key():
     return "Error generating keys"
 
 
-app.run(host="0.0.0.0", port="5000")
+app.run(host=IP_ADDRESS, port=SERVER_PORT)
