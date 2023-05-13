@@ -26,7 +26,6 @@ def generate_keys():
     key_a = keys[json_data["idA"]]
     key_b = keys[json_data["idB"]]
     generated_key = get_random_bytes(32)
-    print(generated_key)
 
     ka_data = {
         "key": b64encode(generated_key).decode(),

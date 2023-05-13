@@ -3,7 +3,7 @@ import random
 import json
 from base64 import b64decode
 from Seguridad.clients import ServerClient
-from Seguridad.seguridad import AESDemo, ChaChaDemo
+from Seguridad.seguridad import AESDemo, ChaChaDemo, FernetDemo
 
 DEVICE_ID = "client"
 SERVER_ID = "server"
@@ -26,8 +26,21 @@ kas = json.loads(decrypter.decrypt(decoded_text))
 if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
     kab: str = kas["key"]
 
-chacha = ChaChaDemo(b64decode(kab))
+new_key = b64decode(kab)
+fernet = ChaChaDemo(new_key)
 
-r = client.chacha(chacha.encrypt("Hello Chacha".encode()))
+r = client.chacha(fernet.encrypt("Hello Chacha".encode()))
+
+print(r.text)
+
+fernet = FernetDemo(kab)
+
+r = client.fernet(fernet.encrypt("Hello Fernet".encode()))
+
+print(r.text)
+
+aes = AESDemo(new_key)
+
+r = client.fernet(fernet.encrypt("Hello AES".encode()))
 
 print(r.text)

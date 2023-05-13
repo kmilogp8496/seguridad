@@ -1,16 +1,16 @@
 """Summary
 Abstract class for encryption
 """
-from abc import ABC, abstractmethod
 
-class EncryptionDemo(ABC):
+
+class EncryptionDemo:
     """Summary
     Abstract class for encryption
     """
+
     def __init__(self, key: bytes):
         self.key = key
 
-    @abstractmethod
     def encrypt(self, data: bytes) -> str:
         """Summary
 
@@ -24,9 +24,8 @@ class EncryptionDemo(ABC):
             str: Encrypted data
         """
         raise NotImplementedError("Subclass must implement abstract method")
-    
-    @abstractmethod
-    def decrypt(self, data: bytes) -> str:
+
+    def decrypt(self, data: bytes, nonce: bytes) -> str:
         """Summary
 
         Args:
