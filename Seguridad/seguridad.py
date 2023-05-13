@@ -30,7 +30,7 @@ class AESDemo(EncryptionDemo):
     def decrypt(self, data) -> str:
         nonce, tag, ciphertext = data.split(b"::")
         cipher = AES.new(self.key, self.mode, nonce)
-        return cipher.decrypt_and_verify(ciphertext, tag).decode("utf-8")
+        return cipher.decrypt_and_verify(ciphertext, tag).decode()
 
 
 class ChaChaDemo(EncryptionDemo):
@@ -43,8 +43,8 @@ class ChaChaDemo(EncryptionDemo):
     def encrypt(self, data: bytes) -> str:
         cipher = ChaCha20.new(key=self.key)
         ciphertext = cipher.encrypt(data)
-        nonce = b64encode(cipher.nonce).decode("utf-8")
-        decoded_cipher_text = b64encode(ciphertext).decode("utf-8")
+        nonce = b64encode(cipher.nonce).decode()
+        decoded_cipher_text = b64encode(ciphertext).decode()
         return json.dumps({"nonce": nonce, "ciphertext": decoded_cipher_text})
 
     def decrypt(self, data: str) -> str:
@@ -53,7 +53,7 @@ class ChaChaDemo(EncryptionDemo):
         cipher_text = b64decode(b64["ciphertext"])
         cipher = ChaCha20.new(key=self.key, nonce=nonce)
         plaintext = cipher.decrypt(cipher_text)
-        return plaintext.decode("utf-8")
+        return plaintext.decode()
 
 
 class FernetDemo(EncryptionDemo):
@@ -70,4 +70,4 @@ class FernetDemo(EncryptionDemo):
 
     def decrypt(self, data: str) -> str:
         fernet = Fernet(self.key)
-        return fernet.decrypt(data).decode("utf-8")
+        return fernet.decrypt(data).decode()

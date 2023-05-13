@@ -53,4 +53,4 @@ class KeyGeneratorClient:
 
     def generate(self, data: str) -> Response:
         """Generate keys for client A and B"""
-        post(f"{self.uri}/generate/", data=data, timeout=10000)
+        return post(f"{self.uri}/generate/", data=data, timeout=10000)

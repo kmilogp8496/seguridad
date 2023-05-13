@@ -25,15 +25,16 @@ def generate_keys():
     json_data = json.loads(data)
     key_a = keys[json_data["idA"]]
     key_b = keys[json_data["idB"]]
-    generated_key = get_random_bytes(16)
+    generated_key = get_random_bytes(32)
+    print(generated_key)
 
     ka_data = {
-        "key": b64encode(generated_key).decode("utf-8"),
+        "key": b64encode(generated_key).decode(),
         "idB": json_data["idB"],
         "randomA": json_data["randomA"],
     }
     kb_data = {
-        "key": b64encode(generated_key).decode("utf-8"),
+        "key": b64encode(generated_key).decode(),
         "idA": json_data["idA"],
         "randomB": json_data["randomB"],
     }
@@ -43,11 +44,11 @@ def generate_keys():
 
     return {
         "kas": b64encode(
-            encrypter_a.encrypt(json.dumps(ka_data).encode("utf-8"))
-        ).decode("utf-8"),
+            encrypter_a.encrypt(json.dumps(ka_data).encode())
+        ).decode(),
         "kbs": b64encode(
-            encrypter_b.encrypt(json.dumps(kb_data).encode("utf-8"))
-        ).decode("utf-8"),
+            encrypter_b.encrypt(json.dumps(kb_data).encode())
+        ).decode(),
     }
 
 

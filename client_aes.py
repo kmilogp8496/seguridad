@@ -3,11 +3,11 @@ import random
 import json
 from base64 import b64decode
 from Seguridad.clients import ServerClient
-from Seguridad.seguridad import AESDemo
+from Seguridad.seguridad import AESDemo, ChaChaDemo
 
 DEVICE_ID = "client"
 SERVER_ID = "server"
-GENERATOR_SHARED_KEY=b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
+GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
 
 random_number = random.randint(0, 1000)
 
@@ -26,4 +26,8 @@ kas = json.loads(decrypter.decrypt(decoded_text))
 if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
     kab: str = kas["key"]
 
-print(kab)
+chacha = ChaChaDemo(b64decode(kab))
+
+r = client.chacha(chacha.encrypt("Hello Chacha".encode()))
+
+print(r.text)
