@@ -1,5 +1,4 @@
 from flask import Flask, request
-from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import json
 from base64 import b64encode
@@ -24,34 +23,31 @@ def generate_keys():
     """
     data = request.get_data()
     json_data = json.loads(data)
-
+    key_a = keys[json_data["idA"]]
+    key_b = keys[json_data["idB"]]
     generated_key = get_random_bytes(16)
 
     ka_data = {
-        "key": str(b64encode(generated_key).decode("utf-8")),
+        "key": b64encode(generated_key).decode("utf-8"),
         "idB": json_data["idB"],
         "randomA": json_data["randomA"],
     }
     kb_data = {
-        "key": str(b64encode(generated_key).decode("utf-8")),
+        "key": b64encode(generated_key).decode("utf-8"),
         "idA": json_data["idA"],
         "randomB": json_data["randomB"],
     }
 
-    encrypter_a = AESDemo(keys[json_data["idA"]])
-    encrypter_b = AESDemo(keys[json_data["idB"]])
+    encrypter_a = AESDemo(key_a)
+    encrypter_b = AESDemo(key_b)
 
     return {
-        "kas": str(
-            b64encode(encrypter_a.encrypt(json.dumps(ka_data).encode("utf-8"))).decode(
-                "utf-8"
-            )
-        ),
-        "kbs": str(
-            b64encode(encrypter_b.encrypt(json.dumps(kb_data).encode("utf-8"))).decode(
-                "utf-8"
-            )
-        ),
+        "kas": b64encode(
+            encrypter_a.encrypt(json.dumps(ka_data).encode("utf-8"))
+        ).decode("utf-8"),
+        "kbs": b64encode(
+            encrypter_b.encrypt(json.dumps(kb_data).encode("utf-8"))
+        ).decode("utf-8"),
     }
 
 
