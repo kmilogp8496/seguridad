@@ -2,9 +2,8 @@
     Demo classes for AES, Fernet and ChaCha20 encryption
 """
 import json
-from base64 import b64encode, b64decode
-from Crypto.Cipher import AES
-from Crypto.Cipher import ChaCha20
+from base64 import b64encode
+from Crypto.Cipher import ChaCha20, AES
 from .encryption_demo import EncryptionDemo
 from cryptography.fernet import Fernet
 
@@ -21,7 +20,7 @@ class AESDemo(EncryptionDemo):
         super().__init__(key)
         self.mode = mode
 
-    def encrypt(self, data: bytes):
+    def encrypt(self, data: bytes) -> bytes:
         cipher = AES.new(self.key, self.mode)
         ciphertext, tag = cipher.encrypt_and_digest(data)
         data = b"::".join([cipher.nonce, tag, ciphertext])
