@@ -27,7 +27,7 @@ for i in range(10):
 
     new_key = b64decode(kab)
     data = json.dumps({"temperature": random.randint(0, 30)})
-    
+
     chacha = ChaChaDemo(new_key)
     r = client.chacha(chacha.encrypt(data.encode()))
     print("ChaCha response: " + r.text)
@@ -39,5 +39,5 @@ for i in range(10):
     aes = AESDemo(new_key)
     r = client.fernet(fernet.encrypt(data.encode()))
     print("AES response: " + r.text)
-    
+
     sleep(2)
