@@ -42,8 +42,8 @@ def read_sensors_aes(device_id: str):
         dict: Decrypted message
     """
     data = request.get_data()
-    decrypter = AESDemo(keys[device_id])
-    decrypted_data = decrypter.decrypt(data)
+    encrypter = AESDemo(keys[device_id])
+    decrypted_data = encrypter.decrypt(data)
 
     return {"message": decrypted_data}
 
@@ -93,9 +93,9 @@ def generate_key():
     response = client.generate(json.dumps(new_data))
     encrypted_keys = response.json()
 
-    decrypter = AESDemo(GENERATOR_SHARED_KEY)
+    encrypter = AESDemo(GENERATOR_SHARED_KEY)
 
-    kbs = json.loads(decrypter.decrypt(b64decode(encrypted_keys["kbs"])))
+    kbs = json.loads(encrypter.decrypt(b64decode(encrypted_keys["kbs"])))
 
     if kbs["idA"] == id_device and kbs["randomB"] == random_number:
         keys.update({f"{id_device}": kbs["key"]})
