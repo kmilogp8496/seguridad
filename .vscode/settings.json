@@ -7,6 +7,7 @@
         "chacha",
         "ciphertext",
         "dotenv",
-        "fernet"
+        "fernet",
+        "xaaw"
     ]
 }

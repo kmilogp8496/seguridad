@@ -19,28 +19,28 @@ response = client.generate_key(get_key_data)
 
 decoded_text = b64decode(response.text)
 
-decrypter = AESDemo(GENERATOR_SHARED_KEY)
+encrypter = AESDemo(GENERATOR_SHARED_KEY)
 
-kas = json.loads(decrypter.decrypt(decoded_text))
+kas = json.loads(encrypter.decrypt(decoded_text))
 
 if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
     kab: str = kas["key"]
 
 new_key = b64decode(kab)
-fernet = ChaChaDemo(new_key)
+chacha = ChaChaDemo(new_key)
 
-r = client.chacha(fernet.encrypt("Hello Chacha".encode()))
+r = client.chacha(chacha.encrypt('{"temperature": 20}'.encode()))
 
 print(r.text)
 
 fernet = FernetDemo(kab)
 
-r = client.fernet(fernet.encrypt("Hello Fernet".encode()))
+r = client.fernet(fernet.encrypt('{"temperature": 21}'.encode()))
 
 print(r.text)
 
 aes = AESDemo(new_key)
 
-r = client.fernet(fernet.encrypt("Hello AES".encode()))
+r = client.fernet(fernet.encrypt('{"temperature": 22}'.encode()))
 
 print(r.text)
