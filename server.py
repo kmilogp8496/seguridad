@@ -9,9 +9,7 @@ from Seguridad.clients import KeyGeneratorClient
 app = Flask(__name__)
 
 keys = {}
-
 DEVICE_ID = "server"
-
 GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xeew"
 
 
@@ -42,7 +40,7 @@ def read_sensors_aes(device_id: str):
         dict: Decrypted message
     """
     data = request.get_data()
-    encrypter = AESDemo(keys[device_id])
+    encrypter = AESDemo(b64decode(keys[device_id]))
     decrypted_data = encrypter.decrypt(data)
 
     return {"message": decrypted_data}

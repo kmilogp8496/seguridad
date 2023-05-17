@@ -34,7 +34,7 @@ class ServerClient:
         Args:
             data (str): encrypted data for aes decryption
         """
-        return post(f"{self.uri}/aes", data=data, timeout=10000)
+        return post(f"{self.uri}/aes/{self.device_id}", data=data, timeout=10000)
 
     def generate_key(self, data: str) -> Response:
         """Generate key for encryption

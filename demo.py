@@ -10,6 +10,7 @@ DEVICE_ID = "client"
 SERVER_ID = "server"
 GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
 
+print(GENERATOR_SHARED_KEY.__len__())
 
 for i in range(1000):
     random_number = random.randint(0, 1000)
@@ -37,7 +38,7 @@ for i in range(1000):
     print("Fernet response: " + r.text)
 
     aes = AESDemo(new_key)
-    r = client.fernet(fernet.encrypt(data.encode()))
+    r = client.aes(aes.encrypt(data.encode()))
     print("AES response: " + r.text)
 
     sleep(2)
