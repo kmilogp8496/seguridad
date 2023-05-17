@@ -10,8 +10,6 @@ DEVICE_ID = "client"
 SERVER_ID = "server"
 GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
 
-print(GENERATOR_SHARED_KEY.__len__())
-
 for i in range(1000):
     random_number = random.randint(0, 1000)
 
