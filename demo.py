@@ -1,6 +1,7 @@
 """Demo for AES encryption"""
 import random
 import json
+from time import sleep
 from base64 import b64decode
 from Seguridad.clients import ServerClient
 from Seguridad.seguridad import AESDemo, ChaChaDemo, FernetDemo
@@ -9,38 +10,46 @@ DEVICE_ID = "client"
 SERVER_ID = "server"
 GENERATOR_SHARED_KEY = b"\xad\xa3h\xf0\xf5\xdb\x82\xee;V\x189#-\xaaw"
 
-random_number = random.randint(0, 1000)
 
-get_key_data = json.dumps({"id": DEVICE_ID, "random": random_number})
+for i in range(10):
+    random_number = random.randint(0, 1000)
 
-client = ServerClient(DEVICE_ID)
+    get_key_data = json.dumps({"id": DEVICE_ID, "random": random_number})
 
-response = client.generate_key(get_key_data)
+    client = ServerClient(DEVICE_ID)
 
-decoded_text = b64decode(response.text)
+    response = client.generate_key(get_key_data)
 
-encrypter = AESDemo(GENERATOR_SHARED_KEY)
+    decoded_text = b64decode(response.text)
 
-kas = json.loads(encrypter.decrypt(decoded_text))
+    encrypter = AESDemo(GENERATOR_SHARED_KEY)
 
-if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
-    kab: str = kas["key"]
+    kas = json.loads(encrypter.decrypt(decoded_text))
 
-new_key = b64decode(kab)
-chacha = ChaChaDemo(new_key)
+    if kas["idB"] == SERVER_ID and kas["randomA"] == random_number:
+        kab: str = kas["key"]
 
-r = client.chacha(chacha.encrypt('{"temperature": 20}'.encode()))
+    new_key = b64decode(kab)
+    chacha = ChaChaDemo(new_key)
 
-print(r.text)
+    temperature = random.randint(0, 30)
 
-fernet = FernetDemo(kab)
+    data = json.dumps({"temperature": temperature})
 
-r = client.fernet(fernet.encrypt('{"temperature": 21}'.encode()))
+    r = client.chacha(chacha.encrypt(data.encode()))
 
-print(r.text)
+    print("ChaCha response: " + r.text)
 
-aes = AESDemo(new_key)
+    fernet = FernetDemo(kab)
 
-r = client.fernet(fernet.encrypt('{"temperature": 22}'.encode()))
+    r = client.fernet(fernet.encrypt(data.encode()))
 
-print(r.text)
+    print("Fernet response: " + r.text)
+
+    aes = AESDemo(new_key)
+
+    r = client.fernet(fernet.encrypt(data.encode()))
+
+    print("AES response: " + r.text)
+    
+    sleep(2)
