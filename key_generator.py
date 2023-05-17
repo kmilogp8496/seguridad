@@ -1,7 +1,7 @@
+from base64 import b64encode
+import json
 from flask import Flask, request
 from Crypto.Random import get_random_bytes
-import json
-from base64 import b64encode
 from Seguridad.app import IP_ADDRESS, KEY_GENERATOR_PORT
 from Seguridad.seguridad import AESDemo
 

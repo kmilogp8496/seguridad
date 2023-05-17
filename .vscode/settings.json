@@ -8,6 +8,7 @@
         "ciphertext",
         "dotenv",
         "fernet",
-        "xaaw"
+        "xaaw",
+        "xeew"
     ]
 }

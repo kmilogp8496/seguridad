@@ -60,11 +60,11 @@ def read_sensors_chacha(device_id: str):
         dict: Decrypted message
     """
     key = b64decode(keys[device_id])
-    decrypter = ChaChaDemo(key)
+    encrypter = ChaChaDemo(key)
     b64 = json.loads(request.get_data())
     nonce = b64decode(b64["nonce"])
     cipher_text = b64decode(b64["ciphertext"])
-    plaintext = decrypter.decrypt(cipher_text, nonce)
+    plaintext = encrypter.decrypt(cipher_text, nonce)
     return {"message": plaintext}
 
 
