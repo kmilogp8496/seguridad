@@ -72,6 +72,8 @@ def read_sensors_chacha(device_id: str):
 def generate_key():
     """Summary
     Generates the keys for communication
+    Based on ISO/IEC 11770-2 Server-Based Protocols
+    Similar to the Bauer-Berson-Feiertag protocol  but without nonces
     
     Returns:
         str: Encrypted keys for communication
