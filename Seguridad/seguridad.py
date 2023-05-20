@@ -4,8 +4,8 @@
 import json
 from base64 import b64encode
 from Crypto.Cipher import ChaCha20, AES
-from .encryption_demo import EncryptionDemo
 from cryptography.fernet import Fernet
+from .encryption_demo import EncryptionDemo
 
 
 class AESDemo(EncryptionDemo):
