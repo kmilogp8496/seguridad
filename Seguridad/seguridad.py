@@ -23,11 +23,11 @@ class AESDemo(EncryptionDemo):
     def encrypt(self, data: bytes) -> bytes:
         cipher = AES.new(self.key, self.mode)
         ciphertext, tag = cipher.encrypt_and_digest(data)
-        data = b"::::".join([cipher.nonce, tag, ciphertext])
+        data = b"::".join([cipher.nonce, tag, ciphertext])
         return data
 
     def decrypt(self, data, _nonce=b"") -> str:
-        nonce, tag, ciphertext = data.split(b"::::")
+        nonce, tag, ciphertext = data.split(b"::")
         cipher = AES.new(self.key, self.mode, nonce)
         return cipher.decrypt_and_verify(ciphertext, tag).decode()
 
